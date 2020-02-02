@@ -1,57 +1,47 @@
-﻿using Smod2;
-using Smod2.API;
-using Smod2.Attributes;
-using Smod2.EventHandlers;
-using Smod2.Events;
-using UnityEngine;
-using MEC;
-using System;
-using System.Collections.Generic;
+﻿using UnityEngine;
+using EXILED;
+using Grenades;
+using Mirror;
 
 namespace PFE
 {
-	[PluginDetails(
-	author = "Cyanox",
-	name = "PFE",
-	description = "Peanut explodes when he dies.",
-	id = "cyan.pfe",
-	version = "1.0.0",
-	SmodMajor = 3,
-	SmodMinor = 0,
-	SmodRevision = 0
-	)]
-	public class Plugin : Smod2.Plugin
+	public class Plugin : EXILED.Plugin
 	{
-		public override void OnDisable() { }
+		private EventHandlers EventHandlers;
 
-		public override void OnEnable() { }
+		public static int magnitude;
 
-		public override void Register()
+		public override void OnEnable() 
 		{
-			AddEventHandlers(new EventHandler());
+			magnitude = Config.GetInt("pfe_magnitude", 1);
+			EventHandlers = new EventHandlers();
+			Events.PlayerDeathEvent += EventHandlers.OnPlayerDeath;
 		}
+
+		public override void OnDisable() 
+		{
+			Events.PlayerDeathEvent -= EventHandlers.OnPlayerDeath;
+			EventHandlers = null;
+		}
+
+		public override void OnReload() { }
+
+		public override string getName { get; } = "PFE";
 	}
 
-	class EventHandler : IEventHandlerPlayerDie
+	class EventHandlers
 	{
-		private IEnumerator<float> DelayAction(Action x, float delay)
+		public void OnPlayerDeath(ref PlayerDeathEvent ev)
 		{
-			yield return Timing.WaitForSeconds(delay);
-			x();
-		}
-
-		public void OnPlayerDie(PlayerDeathEvent ev)
-		{
-			if (ev.Player.TeamRole.Role == Role.SCP_173)
+			if (ev.Player.characterClassManager.CurClass == RoleType.Scp173)
 			{
-				ev.Player.ThrowGrenade(GrenadeType.FRAG_GRENADE, false, Vector.Zero, true, ev.Player.GetPosition(), false, 0);
-				GrenadeManager gm = ((GameObject)ev.Player.GetGameObject()).GetComponent<GrenadeManager>();
-				gm.availableGrenades[GrenadeManager.grenadesOnScene.Count - 1].timeUnitilDetonation = 0f;
-				Timing.RunCoroutine(DelayAction(() =>
+				for (int i = 0; i < Plugin.magnitude; i++)
 				{
-					gm.availableGrenades[GrenadeManager.grenadesOnScene.Count - 1].timeUnitilDetonation = 4.7f;
-					GrenadeManager.grenadesOnScene.RemoveAt(GrenadeManager.grenadesOnScene.Count - 1);
-				}, 0.1f));
+					Grenade grenade = GameObject.Instantiate(ev.Player.GetComponent<GrenadeManager>().availableGrenades[0].grenadeInstance).GetComponent<Grenade>();
+					grenade.InitData(ev.Player.GetComponent<GrenadeManager>(), Vector3.zero, Vector3.zero);
+					NetworkServer.Spawn(grenade.gameObject);
+					grenade.NetworkfuseTime = 0f;
+				}
 			}
 		}
 	}
