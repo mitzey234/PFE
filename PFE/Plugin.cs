@@ -9,17 +9,16 @@ namespace PFE
 	{
 		private EventHandlers EventHandlers;
 
-		public static int magnitude;
-
 		public override void OnEnable() 
 		{
-			magnitude = Config.GetInt("pfe_magnitude", 1);
 			EventHandlers = new EventHandlers();
+			Events.WaitingForPlayersEvent += EventHandlers.OnWaitingForPlayers;
 			Events.PlayerDeathEvent += EventHandlers.OnPlayerDeath;
 		}
 
 		public override void OnDisable() 
 		{
+			Events.WaitingForPlayersEvent -= EventHandlers.OnWaitingForPlayers;
 			Events.PlayerDeathEvent -= EventHandlers.OnPlayerDeath;
 			EventHandlers = null;
 		}
@@ -31,11 +30,13 @@ namespace PFE
 
 	class EventHandlers
 	{
+		public void OnWaitingForPlayers() => Config.Reload();
+
 		public void OnPlayerDeath(ref PlayerDeathEvent ev)
 		{
-			if (ev.Player.characterClassManager.CurClass == RoleType.Scp173)
+			if (Config.isEnabled && ev.Player.characterClassManager.CurClass == RoleType.Scp173)
 			{
-				for (int i = 0; i < Plugin.magnitude; i++)
+				for (int i = 0; i < Config.magnitude; i++)
 				{
 					Grenade grenade = GameObject.Instantiate(ev.Player.GetComponent<GrenadeManager>().availableGrenades[0].grenadeInstance).GetComponent<Grenade>();
 					grenade.InitData(ev.Player.GetComponent<GrenadeManager>(), Vector3.zero, Vector3.zero);
