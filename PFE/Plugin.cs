@@ -2,7 +2,6 @@
 using EXILED;
 using Grenades;
 using Mirror;
-using Harmony;
 
 namespace PFE
 {
