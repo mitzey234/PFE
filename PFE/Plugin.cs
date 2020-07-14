@@ -2,6 +2,7 @@
 using EXILED;
 using Grenades;
 using Mirror;
+using Harmony;
 
 namespace PFE
 {
@@ -9,8 +10,12 @@ namespace PFE
 	{
 		private EventHandlers EventHandlers;
 
+		internal static bool fuse = false;
+
 		public override void OnEnable() 
 		{
+			HarmonyInstance.Create("cyanox.pfe").PatchAll();
+
 			EventHandlers = new EventHandlers();
 			Events.WaitingForPlayersEvent += EventHandlers.OnWaitingForPlayers;
 			Events.PlayerDeathEvent += EventHandlers.OnPlayerDeath;
@@ -28,6 +33,16 @@ namespace PFE
 		public override string getName { get; } = "PFE";
 	}
 
+	[HarmonyPatch(typeof(Grenade), "Awake")]
+	class FusePatch
+	{
+		public static void Prefix(Grenade __instance)
+		{
+			if (Plugin.fuse && __instance.GetType() == typeof(FragGrenade)) __instance.fuseDuration = Config.delay;
+			Plugin.fuse = false;
+		}
+	}
+
 	class EventHandlers
 	{
 		public void OnWaitingForPlayers() => Config.Reload();
@@ -38,10 +53,10 @@ namespace PFE
 			{
 				for (int i = 0; i < Config.magnitude; i++)
 				{
+					Plugin.fuse = Config.delay != 0;
 					Grenade grenade = GameObject.Instantiate(ev.Player.GetComponent<GrenadeManager>().availableGrenades[0].grenadeInstance).GetComponent<Grenade>();
 					grenade.InitData(ev.Player.GetComponent<GrenadeManager>(), Vector3.zero, Vector3.zero);
 					NetworkServer.Spawn(grenade.gameObject);
-					grenade.NetworkfuseTime = 0f;
 				}
 			}
 		}
