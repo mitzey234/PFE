@@ -9,8 +9,6 @@ namespace PFE
 	{
 		private EventHandlers EventHandlers;
 
-		internal static bool fuse = false;
-
 		public override void OnEnable() 
 		{
 			EventHandlers = new EventHandlers();
