@@ -53,7 +53,7 @@ namespace PFE
 			{
 				for (int i = 0; i < Config.magnitude; i++)
 				{
-					Plugin.fuse = Config.delay != 0;
+					Plugin.fuse = Config.delay != 0f;
 					Grenade grenade = GameObject.Instantiate(ev.Player.GetComponent<GrenadeManager>().availableGrenades[0].grenadeInstance).GetComponent<Grenade>();
 					grenade.InitData(ev.Player.GetComponent<GrenadeManager>(), Vector3.zero, Vector3.zero);
 					NetworkServer.Spawn(grenade.gameObject);
