@@ -1,20 +1,13 @@
-﻿namespace PFE
+﻿using Exiled.API.Interfaces;
+
+namespace PFE
 {
-	class Config
+	public class Config : IConfig
 	{
-		internal static int magnitude;
+		public bool IsEnabled { get; set; } = true;
 
-		internal static float delay;
+		public int Magnitude { get; set; } = 1;
 
-		internal static bool isEnabled;
-
-		internal static void Reload()
-		{
-			magnitude = Plugin.Config.GetInt("pfe_magnitude", 1);
-
-			delay = Plugin.Config.GetFloat("pfe_delay", 0f);
-
-			isEnabled = Plugin.Config.GetBool("pfe_enabled", true);
-		}
+		public float Delay { get; set; } = 0f;
 	}
 }
