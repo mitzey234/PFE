@@ -14,6 +14,10 @@ namespace PFE
 
 		public override void OnEnabled() 
 		{
+			base.OnEnabled();
+
+			if (!Config.IsEnabled) return;
+
 			instance = this;
 
 			ev = new EventHandlers();
@@ -23,6 +27,8 @@ namespace PFE
 
 		public override void OnDisabled() 
 		{
+			base.OnDisabled();
+
 			Exiled.Events.Handlers.Player.Died -= ev.OnPlayerDeath;
 
 			ev = null;
