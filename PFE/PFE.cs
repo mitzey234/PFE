@@ -22,14 +22,14 @@ namespace PFE
 
 			ev = new EventHandlers();
 
-			Exiled.Events.Handlers.Player.Died += ev.OnPlayerDeath;
+			Exiled.Events.Handlers.Player.Dying += ev.OnPlayerDying;
 		}
 
 		public override void OnDisabled() 
 		{
 			base.OnDisabled();
 
-			Exiled.Events.Handlers.Player.Died -= ev.OnPlayerDeath;
+			Exiled.Events.Handlers.Player.Dying -= ev.OnPlayerDying;
 
 			ev = null;
 		}
@@ -39,7 +39,7 @@ namespace PFE
 
 	class EventHandlers
 	{
-		public void OnPlayerDeath(DiedEventArgs ev)
+		public void OnPlayerDying(DyingEventArgs ev)
 		{
 			if (PFE.instance.Config.IsEnabled && ev.Target.Role == RoleType.Scp173)
 			{
