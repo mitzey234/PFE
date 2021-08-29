@@ -16,7 +16,7 @@ namespace PFE
 		public override string Author { get; } = "Wafel & Cyanox";
 		public override string Name { get; } = "PeanutFckingExplodes";
 		public override string Prefix { get; } = "PFE";
-		public override Version Version { get; } = new Version(2, 0, 0);
+		public override Version Version { get; } = new Version(3, 0, 0);
 		public override Version RequiredExiledVersion { get; } = new Version(3, 0, 0);
 
 
