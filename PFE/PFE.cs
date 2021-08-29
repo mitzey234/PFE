@@ -1,56 +1,48 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using MEC;
 using Exiled.API.Features;
-using Grenades;
-using Mirror;
-using Exiled.Events.EventArgs;
+using Exiled.Events;
+using Config = Exiled.Loader.Config;
+using Handlers = Exiled.Events.Handlers;
 
 namespace PFE
 {
-	public class PFE : Plugin<Config>
-	{
-		public static PFE instance;
+    public class Plugin : Plugin<Config>
+    {
+		public override string Author { get; } = "Wafel & Cyanox";
+		public override string Name { get; } = "PeanutFckingExplodes";
+		public override string Prefix { get; } = "PFE";
+		public override Version Version { get; } = new Version(2, 0, 0);
+		public override Version RequiredExiledVersion { get; } = new Version(3, 0, 0);
 
-		private EventHandlers ev;
+
+		public static Plugin Singleton;
+		public PlayerEvents PlayerEvents;
 
 		public override void OnEnabled() 
 		{
-			base.OnEnabled();
-
 			if (!Config.IsEnabled) return;
 
-			instance = this;
+			base.OnEnabled();
 
-			ev = new EventHandlers();
+			Singleton = this;
+			PlayerEvents = new PlayerEvents(this);
 
-			Exiled.Events.Handlers.Player.Dying += ev.OnPlayerDying;
+            Handlers.Player.Dying += PlayerEvents.OnPlayerDeath;
 		}
 
 		public override void OnDisabled() 
 		{
 			base.OnDisabled();
 
-			Exiled.Events.Handlers.Player.Dying -= ev.OnPlayerDying;
+			Handlers.Player.Dying -= PlayerEvents.OnPlayerDeath;
 
-			ev = null;
-		}
+			PlayerEvents = null;
 
-		public override string Name => "pfe";
-	}
-
-	class EventHandlers
-	{
-		public void OnPlayerDying(DyingEventArgs ev)
-		{
-			if (PFE.instance.Config.IsEnabled && ev.Target.Role == RoleType.Scp173)
-			{
-				for (int i = 0; i < PFE.instance.Config.Magnitude; i++)
-				{
-					Grenade grenade = GameObject.Instantiate(ev.Target.ReferenceHub.GetComponent<GrenadeManager>().availableGrenades[0].grenadeInstance).GetComponent<Grenade>();
-					grenade.fuseDuration = PFE.instance.Config.Delay;
-					grenade.InitData(ev.Target.ReferenceHub.GetComponent<GrenadeManager>(), Vector3.zero, Vector3.zero);
-					NetworkServer.Spawn(grenade.gameObject);
-				}
-			}
 		}
 	}
 }
