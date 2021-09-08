@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MEC;
 using Exiled.API.Features;
-using Exiled.Events;
-using Config = Exiled.Loader.Config;
 using Handlers = Exiled.Events.Handlers;
 
 namespace PFE

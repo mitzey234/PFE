@@ -1,14 +1,7 @@
 ﻿using Exiled.API.Features;
 using Exiled.API.Features.Items;
 using Exiled.Events.EventArgs;
-using InventorySystem.Items.ThrowableProjectiles;
-using Mirror;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 
 namespace PFE
 {
@@ -26,7 +19,7 @@ namespace PFE
 					for (int i = 0; i < Plugin.Singleton.Config.Magnitude; i++)
 					{
 						new ExplosiveGrenade(ItemType.GrenadeHE, ev.Target) { FuseTime = Plugin.Singleton.Config.Delay }.SpawnActive(ev.Target.Position, ev.Target);
-						Log.Debug($"SCP-173 has exploded ({ev.Target.Position}) with a {Plugin.Singleton.Config.Delay} delay.", Plugin.Singleton?.Config?.Debug ?? false);
+						Log.Debug($"SCP-173 ({ev.Target.Nickname}) has exploded ({ev.Target.Position}) with a {Plugin.Singleton.Config.Delay} delay.", Plugin.Singleton?.Config?.Debug ?? false);
 					}
 				}
 				catch (Exception e)
